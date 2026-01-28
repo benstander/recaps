@@ -49,3 +49,6 @@ public/generated-videos/*
 
 .python-version
 
+
+*.mp4
+*.mp3
