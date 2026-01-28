@@ -1,9 +1,18 @@
+// Step type for the wizard flow
+export type WizardStep = 1 | 2 | 3 | 4 | 5
+
 export type VideoFormat = 'fullscreen' | 'splitscreen' | null
 export type BackgroundVideoCategory = 'gaming' | 'celebrities' | null
 export type GamingVideo = 'minecraft' | 'subway' | 'mega-ramp' | null
-export type CelebrityVideo = 'lebron' | 'ronaldo' | 'trump' | 'theo-von' | 'matthew-mc' | 'elon-musk' | null
+export type CelebrityVideo = 'lebron' | 'ronaldo' | 'mcconaughey' | null
 export type BackgroundVideo = GamingVideo | CelebrityVideo | null
+
+// Mode type (replaces VideoStyle for clarity)
+export type VideoMode = 'academic' | 'brainrot' | 'unhinged' | null
 export type VideoStyle = 'academic' | 'brainrot' | 'unhinged' | null
+
+// Learning style type
+export type LearningStyle = 'explainer' | 'storytelling' | 'socratic' | null
 
 // Background video selection state
 export interface BackgroundVideoSelection {
@@ -23,8 +32,8 @@ export interface VoiceOptions {
   dialogue: VideoDialogue
 }
 
-// Caption types
-export type CaptionFont = 'calibri' | 'arial' | 'impact' | null
+// Caption types - Updated font options
+export type CaptionFont = 'arial' | 'instrument-sans' | 'times-new-roman' | null
 export type CaptionTextSize = 'small' | 'medium' | 'large' | null
 export type CaptionPosition = 'top' | 'middle' | 'bottom' | null
 
@@ -50,8 +59,15 @@ export interface TopicSummary {
   script?: string; // Optional script that gets generated later
 }
 
-// Customise tab type
+// Customise tab type (legacy)
 export type CustomiseTab = 'video' | 'voice' | 'captions' | 'topics'
+
+// Video customization options for step 2
+export interface VideoCustomization {
+  mode: VideoMode
+  learningStyle: LearningStyle
+  backgroundVideo: BackgroundVideo
+}
 
 export interface AppState {
   currentPage: 'landing' | 'topics' | 'customise' | 'finished'
