@@ -65,7 +65,7 @@ export default function ConfirmStep({
       {/* File Section */}
       <div className="mb-6">
         <label className="text-base font-semibold text-gray-900 block mb-3">File</label>
-        <p className="text-sm text-gray-500 mt-2">
+        <p className="text-sm text-gray-500">
           {uploadedFile 
             ? `File: ${uploadedFile.name}` 
             : lectureLink 
@@ -77,7 +77,7 @@ export default function ConfirmStep({
       {/* Video Section */}
       <div className="mb-6">
         <label className="text-base font-semibold text-gray-900 block mb-3">Video</label>
-        <div className="space-y-1 mt-2">
+        <div className="space-y-1">
           <p className="text-sm text-gray-500">Mode: {formatValue(mode)}</p>
           <p className="text-sm text-gray-500">Learning style: {formatValue(learningStyle)}</p>
           <p className="text-sm text-gray-500">Background video: {formatBackgroundVideo(backgroundVideo)}</p>
@@ -87,7 +87,7 @@ export default function ConfirmStep({
       {/* Captions Section */}
       <div className="mb-6">
         <label className="text-base font-semibold text-gray-900 block mb-3">Captions</label>
-        <div className="space-y-1 mt-2">
+        <div className="space-y-1">
           <p className="text-sm text-gray-500">Font: {formatValue(font)}</p>
           <p className="text-sm text-gray-500">Size: {formatValue(textSize)}</p>
           <p className="text-sm text-gray-500">Position: {formatValue(position)}</p>
@@ -97,7 +97,7 @@ export default function ConfirmStep({
       {/* Topic Section */}
       <div>
         <label className="text-base font-semibold text-gray-900 block mb-3">Topic</label>
-        <p className="text-sm text-gray-500 mt-2">
+        <p className="text-sm text-gray-500">
           {selectedTopic ? selectedTopic.title : 'No topic selected'}
         </p>
       </div>

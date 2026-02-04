@@ -29,14 +29,14 @@ export default function Home() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   
   // Video customization state (Step 2)
-  const [mode, setMode] = useState<VideoMode>('academic')
-  const [learningStyle, setLearningStyle] = useState<LearningStyle>('explainer')
-  const [backgroundVideo, setBackgroundVideo] = useState<BackgroundVideo>('minecraft')
+  const [mode, setMode] = useState<VideoMode>(null)
+  const [learningStyle, setLearningStyle] = useState<LearningStyle>(null)
+  const [backgroundVideo, setBackgroundVideo] = useState<BackgroundVideo>(null)
   
   // Caption state (Step 3)
-  const [font, setFont] = useState<CaptionFont>('arial')
-  const [textSize, setTextSize] = useState<CaptionTextSize>('small')
-  const [position, setPosition] = useState<CaptionPosition>('top')
+  const [font, setFont] = useState<CaptionFont>(null)
+  const [textSize, setTextSize] = useState<CaptionTextSize>(null)
+  const [position, setPosition] = useState<CaptionPosition>(null)
   
   // Topics state (Step 4)
   const [topics, setTopics] = useState<Topic[]>([])
@@ -64,6 +64,17 @@ export default function Home() {
       alert("Please provide a lecture link or upload a file!")
       return
     }
+
+    // Reset selections so regenerating topics starts fresh
+    setMode(null)
+    setLearningStyle(null)
+    setBackgroundVideo(null)
+    setFont(null)
+    setTextSize(null)
+    setPosition(null)
+    setTopics([])
+    setTopicSummaries([])
+    setGeneratedVideoUrl("")
 
     setIsProcessing(true)
     
@@ -101,7 +112,7 @@ export default function Home() {
       const generatedTopics: Topic[] = data.summaries.map((summary: TopicSummary, index: number) => ({
         id: `topic_${index}`,
         title: summary.topicTitle,
-        selected: index === 0 // Select first topic by default
+        selected: false
       }))
       
       setTopics(generatedTopics)

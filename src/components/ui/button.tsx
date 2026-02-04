@@ -19,8 +19,8 @@ export function Button({
   const baseClasses = "cursor-pointer font-semibold rounded-md border-2"
   
   const transitionStyle: React.CSSProperties = {
-    transitionProperty: 'background, box-shadow',
-    transitionDuration: '300ms',
+    transitionProperty: 'background, box-shadow, transform',
+    transitionDuration: '150ms',
     transitionTimingFunction: 'ease'
     // Border color and text color are excluded from transition, so they change instantly
   }

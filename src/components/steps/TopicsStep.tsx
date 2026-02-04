@@ -37,7 +37,7 @@ export default function TopicsStep({
             <p className="text-sm">No topics generated yet. Please upload content first.</p>
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto min-h-0 mt-2">
+          <div className="flex-1 overflow-y-auto min-h-0">
             <div className="space-y-2">
               {topics.map((topic) => (
                 <Button

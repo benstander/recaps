@@ -4,32 +4,18 @@ import { supabase } from './supabaseClient';
 
 const MINECRAFT_VIDEOS = [
   'mp1.mp4',
-  'mp2.mp4',
-  'mp3.mp4',
-  'mp4.mp4',
-  'mp5.mp4',
 ];
 
 const SUBWAY_VIDEOS = [
   'ss1.mp4',
-  'ss2.mp4',
-  'ss3.mp4',
-  'ss4.mp4',
-  'ss5.mp4',
 ];
 
 const MEGA_RAMP_VIDEOS = [
   'gta1.mp4',
-  'gta2.mp4',
-  'gta3.mp4',
-  'gta4.mp4',
-  'gta5.mp4',
 ];
 
 const CELEBRITY_VIDEOS = [
   'ronaldo.mp4',
-  'trump.mp4',
-  'theo-von.mp4',
   'matthew-mc.mp4',
   'lebron.mp4',
 ];
@@ -87,7 +73,7 @@ export function getRandomMinecraftVideoUrl() {
   const { data } = supabase
     .storage
     .from('background-videos')
-    .getPublicUrl(`minecraft/${filename}`);
+    .getPublicUrl(filename);
   return data.publicUrl;
 }
 
@@ -97,7 +83,7 @@ export function getRandomSubwayVideoUrl() {
   const { data } = supabase
     .storage
     .from('background-videos')
-    .getPublicUrl(`subway/${filename}`);
+    .getPublicUrl(filename);
   return data.publicUrl;
 }
 
@@ -107,7 +93,7 @@ export function getRandomMegaRampVideoUrl() {
   const { data } = supabase
     .storage
     .from('background-videos')
-    .getPublicUrl(`gta/${filename}`);
+    .getPublicUrl(filename);
   return data.publicUrl;
 }
 
@@ -116,7 +102,7 @@ export function getLebronVideoUrl() {
   const { data } = supabase
     .storage
     .from('background-videos')
-    .getPublicUrl('celebs/lebron.mp4');
+    .getPublicUrl('lebron.mp4');
   return data.publicUrl;
 }
 
@@ -124,7 +110,7 @@ export function getRonaldoVideoUrl() {
   const { data } = supabase
     .storage
     .from('background-videos')
-    .getPublicUrl('celebs/ronaldo.mp4');
+    .getPublicUrl('ronaldo.mp4');
   return data.publicUrl;
 }
 
@@ -132,7 +118,7 @@ export function getTrumpVideoUrl() {
   const { data } = supabase
     .storage
     .from('background-videos')
-    .getPublicUrl('celebs/trump.mp4');
+    .getPublicUrl('trump.mp4');
   return data.publicUrl;
 }
 
@@ -140,7 +126,7 @@ export function getTheoVonVideoUrl() {
   const { data } = supabase
     .storage
     .from('background-videos')
-    .getPublicUrl('celebs/theo-von.mp4');
+    .getPublicUrl('theo-von.mp4');
   return data.publicUrl;
 }
 
@@ -148,7 +134,7 @@ export function getMatthewMcVideoUrl() {
   const { data } = supabase
     .storage
     .from('background-videos')
-    .getPublicUrl('celebs/matthew-mc.mp4');
+    .getPublicUrl('matthew-mc.mp4');
   return data.publicUrl;
 }
 
@@ -156,6 +142,6 @@ export function getElonMuskVideoUrl() {
   const { data } = supabase
     .storage
     .from('background-videos')
-    .getPublicUrl('celebs/elon.mp4');
+    .getPublicUrl('elon.mp4');
   return data.publicUrl;
 }

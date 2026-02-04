@@ -91,7 +91,7 @@ export default function VideoStep({
       <div>
         <label className="text-base font-semibold text-gray-700 block mb-3">Background video</label>
         <div className="flex flex-col gap-2">
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-2">
             {backgroundVideosRow1.map(({ value, label }) => (
               <Button
                 key={value}

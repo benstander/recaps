@@ -111,6 +111,44 @@ export default function ProductPage({
     }
   }
 
+  const getProgress = (): number => {
+    const stepReached = (step: WizardStep) => currentStep >= step
+    const lectureComplete = !!(lectureLink.trim() || uploadedFile)
+    const enteredStep2 = stepReached(2)
+    const modeComplete = stepReached(2) && !!mode
+    const learningStyleComplete = stepReached(2) && !!learningStyle
+    const backgroundVideoComplete = stepReached(2) && !!backgroundVideo
+    const enteredStep3 = stepReached(3)
+    const fontComplete = stepReached(3) && !!font
+    const textSizeComplete = stepReached(3) && !!textSize
+    const positionComplete = stepReached(3) && !!position
+    const enteredStep4 = stepReached(4)
+    const topicsComplete = stepReached(4) && topics.some(t => t.selected)
+    const enteredStep5 = stepReached(5)
+    const generatedComplete = !!generatedVideoUrl
+    const completedSteps = [
+      lectureComplete,
+      enteredStep2,
+      modeComplete,
+      learningStyleComplete,
+      backgroundVideoComplete,
+      enteredStep3,
+      fontComplete,
+      textSizeComplete,
+      positionComplete,
+      enteredStep4,
+      topicsComplete,
+      enteredStep5
+    ].filter(Boolean).length
+    if (generatedComplete) {
+      return 1
+    }
+    if (completedSteps === 0) {
+      return 0
+    }
+    return (completedSteps / 12) * 0.99
+  }
+
   // Handle continue button click
   const handleContinue = async () => {
     if (currentStep === 1) {
@@ -209,6 +247,14 @@ export default function ProductPage({
     }
   }
 
+  const hasCaptionSelection = !!(font || textSize || position)
+  const previewBackground = currentStep === 1 ? null : backgroundVideo
+  const previewCaptionFont = currentStep === 1 ? 'arial' : (font ?? (hasCaptionSelection ? 'arial' : undefined))
+  const previewCaptionTextSize = currentStep === 1 ? 'medium' : (textSize ?? (hasCaptionSelection ? 'medium' : undefined))
+  const previewCaptionPosition = currentStep === 1 ? 'middle' : (position ?? (hasCaptionSelection ? 'middle' : undefined))
+  const showPreviewCaptions = currentStep === 1 ? true : hasCaptionSelection
+  const useDefaultBackground = currentStep === 1
+
   return (
     <div className="min-h-screen bg-white py-12 px-4 flex items-center justify-center font-[family-name:var(--font-instrument-sans)]">
       <div className="w-full max-w-5xl">
@@ -222,9 +268,9 @@ export default function ProductPage({
         </div>
 
         {/* Main Content - Single Card with Form and Video Preview */}
-        <Panel className="flex">
+        <Panel className="flex" style={{ height: '580px' }}>
           {/* Left Side - Customise Section */}
-          <div className="flex-1 flex flex-col" style={{ minHeight: '520px' }}>
+          <div className="flex-1 flex flex-col h-full">
             {/* Step Content */}
             <div 
               style={{ 
@@ -278,8 +324,37 @@ export default function ProductPage({
                   (!canProceed() || isProcessing) ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                <span>{getContinueText()}</span>
-                {currentStep > 1 && currentStep < 5 && <ChevronRight className="w-5 h-5" />}
+                {isProcessing && currentStep === 1 ? (
+                  <motion.div
+                    className="w-5 h-5"
+                    aria-label="Generating topics"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 0.8, ease: "linear", repeat: Infinity }}
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5">
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.35)"
+                        strokeWidth="2.5"
+                      />
+                      <path
+                        d="M21 12a9 9 0 0 1-9 9"
+                        fill="none"
+                        stroke="#ffffff"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </motion.div>
+                ) : (
+                  <>
+                    <span>{getContinueText()}</span>
+                    {currentStep > 1 && currentStep < 5 && <ChevronRight className="w-5 h-5" />}
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -287,9 +362,15 @@ export default function ProductPage({
           {/* Right Side - Video Section (52px gap from form, 24px gap to buttons) */}
           <div className="flex-shrink-0 flex items-stretch" style={{ marginLeft: '52px', gap: '24px' }}>
             <VideoPreview
-              backgroundVideo={backgroundVideo}
+              backgroundVideo={previewBackground}
               isProcessing={isProcessing && currentStep === 5}
               generatedVideoUrl={generatedVideoUrl}
+              progress={getProgress()}
+              captionFont={previewCaptionFont}
+              captionTextSize={previewCaptionTextSize}
+              captionPosition={previewCaptionPosition}
+              showCaptions={showPreviewCaptions}
+              useDefaultBackground={useDefaultBackground}
             />
           </div>
         </Panel>
