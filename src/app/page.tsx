@@ -1,10 +1,11 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import ProductPage from "@/components/ProductPage"
+import type { AuthMode } from "@/components/auth/AuthForm"
+import type { AuthMode } from "@/components/auth/AuthForm"
 import { 
   WizardStep,
   VideoMode,
@@ -19,7 +20,6 @@ import {
 
 export default function Home() {
   const { user } = useAuth()
-  const router = useRouter()
   
   // Wizard step state
   const [currentStep, setCurrentStep] = useState<WizardStep>(1)
@@ -45,6 +45,16 @@ export default function Home() {
   // Processing state
   const [isProcessing, setIsProcessing] = useState(false)
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState("")
+  const [pendingGenerate, setPendingGenerate] = useState(false)
+  const [authPanelMode, setAuthPanelMode] = useState<AuthMode | null>(null)
+
+  useEffect(() => {
+    if (!user || !pendingGenerate) return
+    setPendingGenerate(false)
+    setAuthPanelMode(null)
+    generateReel()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, pendingGenerate])
 
   // Handle file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,9 +137,9 @@ export default function Home() {
 
   // Generate video (Step 5)
   const generateReel = async () => {
-    // Check if user is authenticated
     if (!user) {
-      router.push('/auth')
+      setAuthPanelMode("login")
+      setPendingGenerate(true)
       return
     }
 
@@ -198,32 +208,44 @@ export default function Home() {
   }
 
   return (
-    <ProductPage
-      currentStep={currentStep}
-      setCurrentStep={setCurrentStep}
-      lectureLink={lectureLink}
-      setLectureLink={setLectureLink}
-      uploadedFile={uploadedFile}
-      handleFileUpload={handleFileUpload}
-      removeUploadedFile={removeUploadedFile}
-      mode={mode}
-      setMode={setMode}
-      learningStyle={learningStyle}
-      setLearningStyle={setLearningStyle}
-      backgroundVideo={backgroundVideo}
-      setBackgroundVideo={setBackgroundVideo}
-      font={font}
-      setFont={setFont}
-      textSize={textSize}
-      setTextSize={setTextSize}
-      position={position}
-      setPosition={setPosition}
-      topics={topics}
-      setTopics={setTopics}
-      isProcessing={isProcessing}
+    <>
+      <ProductPage
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
+        lectureLink={lectureLink}
+        setLectureLink={setLectureLink}
+        uploadedFile={uploadedFile}
+        handleFileUpload={handleFileUpload}
+        removeUploadedFile={removeUploadedFile}
+        mode={mode}
+        setMode={setMode}
+        learningStyle={learningStyle}
+        setLearningStyle={setLearningStyle}
+        backgroundVideo={backgroundVideo}
+        setBackgroundVideo={setBackgroundVideo}
+        font={font}
+        setFont={setFont}
+        textSize={textSize}
+        setTextSize={setTextSize}
+        position={position}
+        setPosition={setPosition}
+        topics={topics}
+        setTopics={setTopics}
+        isProcessing={isProcessing}
       processInputAndGenerateTopics={processInputAndGenerateTopics}
       generateReel={generateReel}
       generatedVideoUrl={generatedVideoUrl}
+      authMode={authPanelMode}
+      onAuthCancel={() => {
+        setAuthPanelMode(null)
+        setPendingGenerate(false)
+      }}
+      onAuthSuccess={() => setAuthPanelMode(null)}
+      onSignUp={() => {
+        setAuthPanelMode("signup")
+        setPendingGenerate(false)
+      }}
     />
+    </>
   )
 }

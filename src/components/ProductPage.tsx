@@ -13,6 +13,7 @@ import {
   CaptionPosition,
   Topic
 } from "./states/types"
+import AuthForm, { AuthMode } from "@/components/auth/AuthForm"
 import { UploadStep, VideoStep, CaptionsStep, TopicsStep, ConfirmStep } from "./steps"
 import VideoPreview from "./VideoPreview"
 import Button from "./ui/button"
@@ -57,6 +58,12 @@ interface ProductPageProps {
   
   // Generated video
   generatedVideoUrl: string
+
+  // Auth CTA
+  onSignUp?: () => void
+  authMode?: AuthMode | null
+  onAuthCancel?: () => void
+  onAuthSuccess?: () => void
 }
 
 export default function ProductPage({
@@ -84,8 +91,22 @@ export default function ProductPage({
   isProcessing,
   processInputAndGenerateTopics,
   generateReel,
-  generatedVideoUrl
+  generatedVideoUrl,
+  onSignUp,
+  authMode,
+  onAuthCancel,
+  onAuthSuccess
 }: ProductPageProps) {
+  const handleLogoClick = () => {
+    console.log('Logo clicked! Resetting to initial state')
+    // Close auth panel if open
+    if (onAuthCancel) {
+      onAuthCancel()
+    }
+    // Reset to step 1
+    setCurrentStep(1)
+  }
+
   // Animation variants - smooth fade with blur transition (no horizontal movement)
   const variants = {
     initial: { opacity: 0, filter: 'blur(1px)' },
@@ -254,17 +275,27 @@ export default function ProductPage({
   const previewCaptionPosition = currentStep === 1 ? 'middle' : (position ?? (hasCaptionSelection ? 'middle' : undefined))
   const showPreviewCaptions = currentStep === 1 ? true : hasCaptionSelection
   const useDefaultBackground = currentStep === 1
+  const showAuthPanel = !!authMode
 
   return (
     <div className="min-h-screen bg-white py-12 px-4 flex items-center justify-center font-[family-name:var(--font-instrument-sans)]">
       <div className="w-full max-w-5xl">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Recaps</h1>
-          <p className="text-md font-medium text-gray-600 text-right max-w-xs tracking-wide">
-            Upload your notes, pdf or youtube video.<br />
-            Customise your video. Learn the fun way.
-          </p>
+        <div className="flex justify-between items-center mb-8 relative z-50">
+          <button 
+            type="button"
+            onClick={handleLogoClick}
+            className="text-3xl font-bold text-gray-900 bg-transparent border-none cursor-pointer hover:opacity-70"
+          >
+            Recaps
+          </button>
+          <Button
+            variant="dark"
+            onClick={onSignUp}
+            className="px-8 py-4 rounded-full"
+          >
+            Sign up
+          </Button>
         </div>
 
         {/* Main Content - Single Card with Form and Video Preview */}
@@ -284,7 +315,7 @@ export default function ProductPage({
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
-                  key={currentStep}
+                  key={showAuthPanel ? `auth-${authMode}` : `step-${currentStep}`}
                   initial={variants.initial}
                   animate={variants.animate}
                   exit={variants.exit}
@@ -299,64 +330,77 @@ export default function ProductPage({
                     flexDirection: 'column',
                   }}
                 >
-                  {renderStepContent()}
+                  {showAuthPanel ? (
+                    <div className="h-full flex flex-col">
+                      <div className="flex-1 overflow-auto">
+                        <AuthForm
+                          initialMode={authMode ?? "login"}
+                          onSuccess={onAuthSuccess}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    renderStepContent()
+                  )}
                 </motion.div>
               </AnimatePresence>
             </div>
 
             {/* Navigation Buttons */}
-            <div className="flex gap-2 mt-6 shrink-0">
-              {currentStep > 1 && (
-                <Button
-                  variant="dark"
-                  onClick={handleBack}
-                  className="flex-1 flex items-center justify-center gap-2 py-4"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                  <span>Back</span>
-                </Button>
-              )}
-              <Button
-                variant="orange"
-                onClick={handleContinue}
-                disabled={!canProceed() || isProcessing}
-                className={`flex-1 flex items-center justify-center gap-2 py-4 ${
-                  (!canProceed() || isProcessing) ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-              >
-                {isProcessing && currentStep === 1 ? (
-                  <motion.div
-                    className="w-5 h-5"
-                    aria-label="Generating topics"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.8, ease: "linear", repeat: Infinity }}
+            {!showAuthPanel && (
+              <div className="flex gap-2 mt-6 shrink-0">
+                {currentStep > 1 && (
+                  <Button
+                    variant="dark"
+                    onClick={handleBack}
+                    className="flex-1 flex items-center justify-center gap-2 py-4"
                   >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5">
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="9"
-                        fill="none"
-                        stroke="rgba(255,255,255,0.35)"
-                        strokeWidth="2.5"
-                      />
-                      <path
-                        d="M21 12a9 9 0 0 1-9 9"
-                        fill="none"
-                        stroke="#ffffff"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </motion.div>
-                ) : (
-                  <>
-                    <span>{getContinueText()}</span>
-                    {currentStep > 1 && currentStep < 5 && <ChevronRight className="w-5 h-5" />}
-                  </>
+                    <ChevronLeft className="w-5 h-5" />
+                    <span>Back</span>
+                  </Button>
                 )}
-              </Button>
-            </div>
+                <Button
+                  variant="orange"
+                  onClick={handleContinue}
+                  disabled={!canProceed() || isProcessing}
+                  className={`flex-1 flex items-center justify-center gap-2 py-4 ${
+                    (!canProceed() || isProcessing) ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {isProcessing && currentStep === 1 ? (
+                    <motion.div
+                      className="w-5 h-5"
+                      aria-label="Generating topics"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 0.8, ease: "linear", repeat: Infinity }}
+                    >
+                      <svg viewBox="0 0 24 24" className="w-5 h-5">
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="9"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.35)"
+                          strokeWidth="2.5"
+                        />
+                        <path
+                          d="M21 12a9 9 0 0 1-9 9"
+                          fill="none"
+                          stroke="#ffffff"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </motion.div>
+                  ) : (
+                    <>
+                      <span>{getContinueText()}</span>
+                      {currentStep > 1 && currentStep < 5 && <ChevronRight className="w-5 h-5" />}
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Right Side - Video Section (52px gap from form, 24px gap to buttons) */}
