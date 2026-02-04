@@ -3,95 +3,78 @@
 import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-
-  // Import types and components
+import { useAuth } from "@/lib/auth-context"
+import ProductPage from "@/components/ProductPage"
 import { 
-  LandingPage,
-  CustomisePage,
-  FinishedPage,
-  VideoFormat, 
-  BackgroundVideo, 
-  BackgroundVideoSelection,
-  VoiceOptions,
-  VoiceStyle,
-  VoiceCharacter,
-  VideoDialogue,
-  CaptionOptions,
+  WizardStep,
+  VideoMode,
+  LearningStyle,
+  BackgroundVideo,
   CaptionFont,
   CaptionTextSize,
   CaptionPosition,
   Topic,
   TopicSummary
-} from "@/components/states"
-
-// Import shared components
-import Header from "@/components/shared/Header"
-import { useAuth } from "@/lib/auth-context"
+} from "@/components/states/types"
 
 export default function Home() {
   const { user } = useAuth()
   const router = useRouter()
-  const [currentState, setCurrentState] = useState<'landing' | 'customise' | 'finished'>('landing')
+  
+  // Wizard step state
+  const [currentStep, setCurrentStep] = useState<WizardStep>(1)
+  
+  // Upload state (Step 1)
   const [lectureLink, setLectureLink] = useState("")
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-  const [videoFormat, setVideoFormat] = useState<VideoFormat>('fullscreen')
-  const [backgroundVideoSelection, setBackgroundVideoSelection] = useState<BackgroundVideoSelection>({
-    category: 'gaming',
-    video: 'subway'
-  })
-  const [voiceOptions, setVoiceOptions] = useState<VoiceOptions>({
-    style: 'academic',
-    character: 'storyteller',
-    dialogue: null
-  })
-  const [captionOptions, setCaptionOptions] = useState<CaptionOptions>({
-    font: 'impact',
-    textSize: 'medium',
-    position: 'middle'
-  })
+  
+  // Video customization state (Step 2)
+  const [mode, setMode] = useState<VideoMode>(null)
+  const [learningStyle, setLearningStyle] = useState<LearningStyle>(null)
+  const [backgroundVideo, setBackgroundVideo] = useState<BackgroundVideo>(null)
+  
+  // Caption state (Step 3)
+  const [font, setFont] = useState<CaptionFont>(null)
+  const [textSize, setTextSize] = useState<CaptionTextSize>(null)
+  const [position, setPosition] = useState<CaptionPosition>(null)
+  
+  // Topics state (Step 4)
   const [topics, setTopics] = useState<Topic[]>([])
   const [topicSummaries, setTopicSummaries] = useState<TopicSummary[]>([])
+  
+  // Processing state
   const [isProcessing, setIsProcessing] = useState(false)
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState("")
 
+  // Handle file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setUploadedFile(e.target.files[0])
     }
   }
 
-  // Voice option setters
-  const setVoiceStyle = (style: VoiceStyle) => {
-    setVoiceOptions(prev => ({ ...prev, style }))
+  // Remove uploaded file
+  const removeUploadedFile = () => {
+    setUploadedFile(null)
   }
 
-  const setVoiceCharacter = (character: VoiceCharacter) => {
-    setVoiceOptions(prev => ({ ...prev, character }))
-  }
-
-  const setVideoDialogue = (dialogue: VideoDialogue) => {
-    setVoiceOptions(prev => ({ ...prev, dialogue }))
-  }
-
-  // Caption option setters
-  const setCaptionFont = (font: CaptionFont) => {
-    setCaptionOptions(prev => ({ ...prev, font }))
-  }
-
-  const setCaptionTextSize = (textSize: CaptionTextSize) => {
-    setCaptionOptions(prev => ({ ...prev, textSize }))
-  }
-
-  const setCaptionPosition = (position: CaptionPosition) => {
-    setCaptionOptions(prev => ({ ...prev, position }))
-  }
-
-  // Generate topics from landing page and go to customise
+  // Process input and generate topics (Step 1 -> Step 2)
   const processInputAndGenerateTopics = async () => {
     if (!lectureLink.trim() && !uploadedFile) {
       alert("Please provide a lecture link or upload a file!")
       return
     }
+
+    // Reset selections so regenerating topics starts fresh
+    setMode(null)
+    setLearningStyle(null)
+    setBackgroundVideo(null)
+    setFont(null)
+    setTextSize(null)
+    setPosition(null)
+    setTopics([])
+    setTopicSummaries([])
+    setGeneratedVideoUrl("")
 
     setIsProcessing(true)
     
@@ -129,11 +112,10 @@ export default function Home() {
       const generatedTopics: Topic[] = data.summaries.map((summary: TopicSummary, index: number) => ({
         id: `topic_${index}`,
         title: summary.topicTitle,
-        selected: index === 0 // Select first topic by default
+        selected: false
       }))
       
       setTopics(generatedTopics)
-      setCurrentState('customise')
       
     } catch (error) {
       console.error('Error processing input:', error)
@@ -143,11 +125,10 @@ export default function Home() {
     }
   }
 
-  // Generate video from customise page - NOW PROTECTED BY AUTH
-  const generateReel = async (customInstructions?: string) => {
+  // Generate video (Step 5)
+  const generateReel = async () => {
     // Check if user is authenticated
     if (!user) {
-      // Redirect to auth page instead of opening modal
       router.push('/auth')
       return
     }
@@ -167,6 +148,21 @@ export default function Home() {
         selectedTopics.some(topic => topic.title === summary.topicTitle)
       )
       
+      // Map the new learning style to the existing API voiceOptions
+      const voiceOptions = {
+        style: mode,
+        character: 'storyteller' as const,
+        dialogue: learningStyle === 'explainer' ? 'explainer' as const : 
+                  learningStyle === 'storytelling' ? 'narrative' as const : 
+                  'socratic' as const
+      }
+
+      const captionOptions = {
+        font,
+        textSize,
+        position
+      }
+
       // Generate video with selected summaries
       const videoResponse = await fetch('/api/createVideo', {
         method: 'POST',
@@ -175,13 +171,12 @@ export default function Home() {
         },
         body: JSON.stringify({
           summaries: selectedSummaries.length > 0 ? selectedSummaries : topicSummaries.slice(0, selectedTopics.length),
-          backgroundVideo: backgroundVideoSelection.video || 'mega-ramp',
+          backgroundVideo: backgroundVideo || 'minecraft',
           voiceEnabled: true,
-          videoFormat,
+          videoFormat: 'fullscreen',
           voiceOptions,
           captionOptions,
-          customInstructions,
-          userId: user.id, // Include user ID for tracking
+          userId: user.id,
         }),
       })
 
@@ -192,7 +187,6 @@ export default function Home() {
       const videoData = await videoResponse.json()
       if (videoData.videos && videoData.videos.length > 0 && videoData.videos[0].videoUrl) {
         setGeneratedVideoUrl(videoData.videos[0].videoUrl)
-        setCurrentState('finished')
       }
       
     } catch (error) {
@@ -203,96 +197,33 @@ export default function Home() {
     }
   }
 
-  const resetToLanding = () => {
-    setCurrentState('landing')
-    setLectureLink("")
-    setUploadedFile(null)
-    setGeneratedVideoUrl("")
-    setVideoFormat('fullscreen')
-    setBackgroundVideoSelection({
-      category: 'gaming',
-      video: 'subway'
-    })
-    setVoiceOptions({
-      style: 'academic',
-      character: 'storyteller',
-      dialogue: null
-    })
-    setCaptionOptions({
-      font: 'impact',
-      textSize: 'medium',
-      position: 'middle'
-    })
-    setTopics([])
-    setTopicSummaries([])
-  }
-
-  const renderCurrentState = () => {
-    switch (currentState) {
-      case 'landing':
-        return (
-          <LandingPage
-            lectureLink={lectureLink}
-            setLectureLink={setLectureLink}
-            uploadedFile={uploadedFile}
-            handleFileUpload={handleFileUpload}
-            processInput={processInputAndGenerateTopics}
-            isProcessing={isProcessing}
-            removeUploadedFile={() => setUploadedFile(null)}
-          />
-        )
-      case 'customise':
-        return (
-          <CustomisePage
-            videoFormat={videoFormat}
-            setVideoFormat={setVideoFormat}
-            backgroundVideoSelection={backgroundVideoSelection}
-            setBackgroundVideoSelection={setBackgroundVideoSelection}
-            voiceOptions={voiceOptions}
-            setVoiceStyle={setVoiceStyle}
-            setVoiceCharacter={setVoiceCharacter}
-            setVideoDialogue={setVideoDialogue}
-            captionOptions={captionOptions}
-            setCaptionFont={setCaptionFont}
-            setCaptionTextSize={setCaptionTextSize}
-            setCaptionPosition={setCaptionPosition}
-            topics={topics}
-            setTopics={setTopics}
-            generateReel={generateReel}
-            isProcessing={isProcessing}
-          />
-        )
-      case 'finished':
-        return (
-          <FinishedPage
-            generatedVideoUrl={generatedVideoUrl}
-            resetToLanding={resetToLanding}
-          />
-        )
-      default:
-        return (
-          <LandingPage
-            lectureLink={lectureLink}
-            setLectureLink={setLectureLink}
-            uploadedFile={uploadedFile}
-            handleFileUpload={handleFileUpload}
-            processInput={processInputAndGenerateTopics}
-            isProcessing={isProcessing}
-            removeUploadedFile={() => setUploadedFile(null)}
-          />
-        )
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        <Header />
-        {renderCurrentState()}
-      </div>
-    </div>
+    <ProductPage
+      currentStep={currentStep}
+      setCurrentStep={setCurrentStep}
+      lectureLink={lectureLink}
+      setLectureLink={setLectureLink}
+      uploadedFile={uploadedFile}
+      handleFileUpload={handleFileUpload}
+      removeUploadedFile={removeUploadedFile}
+      mode={mode}
+      setMode={setMode}
+      learningStyle={learningStyle}
+      setLearningStyle={setLearningStyle}
+      backgroundVideo={backgroundVideo}
+      setBackgroundVideo={setBackgroundVideo}
+      font={font}
+      setFont={setFont}
+      textSize={textSize}
+      setTextSize={setTextSize}
+      position={position}
+      setPosition={setPosition}
+      topics={topics}
+      setTopics={setTopics}
+      isProcessing={isProcessing}
+      processInputAndGenerateTopics={processInputAndGenerateTopics}
+      generateReel={generateReel}
+      generatedVideoUrl={generatedVideoUrl}
+    />
   )
 }
-
-
-

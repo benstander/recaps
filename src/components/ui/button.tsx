@@ -1,61 +1,111 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+"use client"
 
-import { cn } from "@/lib/utils"
+import React from "react"
 
-const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-  {
-    variants: {
-      variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
-        black: "bg-black text-white hover:bg-black focus:bg-black disabled:bg-black disabled:text-white disabled:opacity-100",
-        purple: "bg-purple-700 text-white hover:bg-purple-700 focus:bg-purple-700 disabled:bg-purple-600 disabled:text-white disabled:opacity-100",
-      },
-      size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "orange" | "grey" | "dark" | "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
+  size?: "default" | "sm" | "lg" | "icon"
+  children: React.ReactNode
+}
+
+export function Button({ 
+  variant = "grey", 
+  size = "default",
+  children, 
+  className = "",
+  style,
+  ...props 
+}: ButtonProps) {
+  const baseClasses = "cursor-pointer font-semibold rounded-md border-2"
+  
+  const transitionStyle: React.CSSProperties = {
+    transitionProperty: 'background, box-shadow, transform',
+    transitionDuration: '150ms',
+    transitionTimingFunction: 'ease'
+    // Border color and text color are excluded from transition, so they change instantly
   }
-)
+  
+  const sizeClasses: Record<string, string> = {
+    default: "text-sm py-3 px-4",
+    sm: "text-xs py-2 px-3",
+    lg: "text-base py-4 px-6",
+    icon: "p-3"
+  }
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
+  const variantStyles: Record<string, React.CSSProperties> = {
+    orange: {
+      background: "linear-gradient(to bottom, #F1753F 0%, #FF4B00 100%)",
+      borderColor: "#e93b0a",
+      color: "white",
+      boxShadow: "0 1px 4px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.1)"
+    },
+    grey: {
+      background: "linear-gradient(to bottom, #E9E9E9 0%, #D7D7D7 100%)",
+      borderColor: "#c8c8c8",
+      color: "#4A4A4A",
+      boxShadow: "0 1px 4px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -1px 0 rgba(0, 0, 0, 0.05)"
+    },
+    dark: {
+      background: "linear-gradient(to bottom, #484848 0%, #2C2C2C 100%)",
+      borderColor: "#101010",
+      color: "white",
+      boxShadow: "0 1px 4px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.2)"
+    },
+    default: {
+      background: "linear-gradient(to bottom, #F1753F 0%, #FF4B00 100%)",
+      borderColor: "#e93b0a",
+      color: "white",
+      boxShadow: "0 1px 4px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.1)"
+    },
+    destructive: {
+      background: "#ef4444",
+      borderColor: "#dc2626",
+      color: "white"
+    },
+    outline: {
+      background: "transparent",
+      borderColor: "#d1d5db",
+      color: "#374151"
+    },
+    secondary: {
+      background: "#e5e7eb",
+      borderColor: "#d1d5db",
+      color: "#111827"
+    },
+    ghost: {
+      background: "transparent",
+      borderColor: "transparent",
+      color: "#374151"
+    },
+    link: {
+      background: "transparent",
+      borderColor: "transparent",
+      color: "#3b82f6",
+      textDecoration: "underline"
+    }
+  }
+
+  const variantClasses: Record<string, string> = {
+    orange: "hover:brightness-95 active:translate-y-0.5 active:scale-[0.97]",
+    grey: "hover:brightness-95 active:translate-y-0.5 active:scale-[0.97]",
+    dark: "hover:brightness-110 active:translate-y-0.5 active:scale-[0.97]",
+    default: "hover:brightness-95 active:translate-y-0.5 active:scale-[0.97]",
+    destructive: "hover:bg-red-600 active:scale-[0.97]",
+    outline: "hover:bg-gray-100 active:scale-[0.97]",
+    secondary: "hover:bg-gray-300 active:scale-[0.97]",
+    ghost: "hover:bg-gray-100 active:scale-[0.97]",
+    link: "hover:text-blue-600 active:scale-[0.97]"
+  }
 
   return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+    <button 
+      className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant] || ""} ${className}`}
+      style={{ ...transitionStyle, ...variantStyles[variant], ...style }}
       {...props}
-    />
+    >
+      {children}
+    </button>
   )
 }
 
-export { Button, buttonVariants }
+export default Button
