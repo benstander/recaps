@@ -1,5 +1,6 @@
 import React, { useRef } from "react"
 import { Button } from "@/components/ui/button"
+import { controlInputClass, controlRadiusClass, controlSurfaceClass } from "@/components/ui/control-classes"
 import { Input } from "@/components/ui/input"
 import { Link, FileText, X } from "lucide-react"
 import ProgressBar from "@/components/ui/ProgressBar"
@@ -23,14 +24,14 @@ export default function LandingPage({
   isProcessing,
   removeUploadedFile // Added prop
 }: LandingPageProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleRemoveFile = () => {
-    removeUploadedFile();
+    removeUploadedFile()
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = ""
     }
-  };
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[66vh]">
@@ -48,17 +49,16 @@ export default function LandingPage({
 
         <div className="space-y-4">
           {/* File Upload Display (fixed height to prevent layout shift) */}
-          <div style={{ minHeight: 56 }}>
+          <div className="min-h-[56px]">
             {uploadedFile ? (
-              <div className="bg-gray-50 border rounded-full px-6 py-4 inline-flex items-center gap-4">
+              <div className={`${controlSurfaceClass} px-6 py-4 inline-flex items-center gap-4`}>
                 <FileText className="w-4 h-4 text-gray-600" />
                 <span className="text-gray-700 text-sm font-medium">{uploadedFile.name}</span>
                 <button
                   type="button"
                   aria-label="Remove uploaded file"
                   onClick={handleRemoveFile}
-                  className="p-1 rounded-full hover:bg-gray-50 hover:border-gray-400"
-                  style={{ lineHeight: 0 }}
+                  className={`p-1 ${controlRadiusClass} leading-none hover:bg-gray-50 hover:border-gray-200`}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -73,7 +73,7 @@ export default function LandingPage({
                 placeholder="Paste your lecture link"
                 value={lectureLink}
                 onChange={(e) => setLectureLink(e.target.value)}
-                className="py-6 px-12 text-md border border-gray-500 text-gray-700 rounded-full w-full hover:border-gray-400"
+                className={`${controlInputClass} pl-12 w-full`}
               />
             </div>
             <span className="flex items-center text-black text-lg">or</span>
@@ -87,7 +87,7 @@ export default function LandingPage({
               />
               <Button 
                 variant="outline" 
-                className={`px-8 py-6 text-sm rounded-full hover:bg-gray-50 hover:border-gray-400 flex items-center ${
+                className={`px-8 py-6 text-sm hover:bg-gray-50 hover:border-gray-400 flex items-center ${
                   uploadedFile 
                     ? 'border-2 border-pink-500 hover:border-pink-600'
                     : 'border border-gray-500 text-gray-700 hover:border-gray-400'
@@ -102,7 +102,7 @@ export default function LandingPage({
           <Button
             onClick={processInput}
             disabled={isProcessing || (!lectureLink.trim() && !uploadedFile)}
-            className="w-full py-7 text-md font-semibold rounded-full bg-gradient-to-r from-pink-400 to-pink-600 text-white hover:from-pink-500 hover:to-pink-700 disabled:opacity-50"
+            className="w-full py-7 text-md font-semibold bg-gradient-to-r from-pink-400 to-pink-600 text-white hover:from-pink-500 hover:to-pink-700 disabled:opacity-50"
           >
             {isProcessing ? "Splitting into topics..." : "Convert to reels"}
           </Button>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { controlInputClass, controlInputButtonClass } from "@/components/ui/control-classes"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/lib/auth-context"
@@ -129,25 +130,11 @@ export default function AuthForm({
     onModeChange?.(nextMode)
   }
 
+  const inputClasses = controlInputClass
+  const inputButtonClasses = controlInputButtonClass
+
   return (
     <div className={`flex h-full min-h-[520px] flex-col justify-center ${className}`}>
-      <style dangerouslySetInnerHTML={{__html: `
-        #email:-webkit-autofill,
-        #email:-webkit-autofill:hover,
-        #email:-webkit-autofill:focus,
-        #email:-webkit-autofill:active,
-        #password:-webkit-autofill,
-        #password:-webkit-autofill:hover,
-        #password:-webkit-autofill:focus,
-        #password:-webkit-autofill:active {
-          -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06) !important;
-          -webkit-text-fill-color: #6b7280 !important;
-          background-color: transparent !important;
-          background: transparent !important;
-          border: 1px solid #e5e5e5 !important;
-          transition: background-color 5000s ease-in-out 0s;
-        }
-      `}} />
       <section className="text-left">
         <h1 className="text-3xl font-semibold text-gray-900 leading-tight">
           Welcome to Recaps
@@ -156,25 +143,14 @@ export default function AuthForm({
       </section>
 
       {/* Explicit spacer so separation can't be "optimized away" by layout */}
-      <div aria-hidden className="h-16 shrink-0" style={{ height: 72 }} />
+      <div aria-hidden className="h-[72px] shrink-0" />
 
-      <section className="space-y-4" style={{ marginTop: 0 }}>
+      <section className="space-y-4 mt-0">
         <button
           type="button"
           disabled={loading}
           onClick={handleGoogleSignIn}
-          className="w-full focus:outline-none text-sm font-medium text-gray-600 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-          style={{
-            background: "transparent",
-            border: "1px solid #e5e5e5",
-            borderRadius: "6px",
-            boxShadow: "inset 0 2px 4px rgba(0, 0, 0, 0.06)",
-            color: "#6b7280",
-            paddingLeft: '1rem',
-            paddingRight: '1rem',
-            paddingTop: '1rem',
-            paddingBottom: '1rem'
-          }}
+          className={inputButtonClasses}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -209,30 +185,13 @@ export default function AuthForm({
               Email
             </Label>
             <div className="relative mt-2">
-              <input
+              <Input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full focus:outline-none focus:ring-0 focus:border-[#e5e5e5] text-sm font-medium placeholder:text-gray-400 text-gray-600"
-                style={{
-                  background: "transparent",
-                  border: "1px solid #e5e5e5",
-                  borderRadius: "6px",
-                  boxShadow: "inset 0 2px 4px rgba(0, 0, 0, 0.06)",
-                  color: "#6b7280",
-                  paddingLeft: '1rem',
-                  paddingRight: '1rem',
-                  paddingTop: '1rem',
-                  paddingBottom: '1rem'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#e5e5e5';
-                  e.target.style.outline = 'none';
-                  e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.06)';
-                  e.target.style.backgroundColor = 'transparent';
-                }}
+                className={inputClasses}
                 required
                 autoComplete="email"
               />
@@ -252,30 +211,13 @@ export default function AuthForm({
                   Password
                 </Label>
                 <div className="relative mt-2">
-                  <input
+                  <Input
                     id="password"
                     type="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full focus:outline-none focus:ring-0 focus:border-[#e5e5e5] text-sm font-medium placeholder:text-gray-400 text-gray-600"
-                    style={{
-                      background: "transparent",
-                      border: "1px solid #e5e5e5",
-                      borderRadius: "6px",
-                      boxShadow: "inset 0 2px 4px rgba(0, 0, 0, 0.06)",
-                      color: "#6b7280",
-                      paddingLeft: '1rem',
-                      paddingRight: '1rem',
-                      paddingTop: '1rem',
-                      paddingBottom: '1rem'
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#e5e5e5';
-                      e.target.style.outline = 'none';
-                      e.target.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.06)';
-                      e.target.style.backgroundColor = 'transparent';
-                    }}
+                    className={inputClasses}
                     onBlur={(e) => {
                       e.target.blur();
                     }}
@@ -293,18 +235,18 @@ export default function AuthForm({
           </AnimatePresence>
 
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 border border-red-200 p-4 rounded-lg mt-4" style={{ marginTop: '1rem' }}>
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 p-4 rounded-lg mt-4">
               {error}
             </div>
           )}
 
           {message && (
-            <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 p-4 rounded-lg mt-4" style={{ marginTop: '1rem' }}>
+            <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 p-4 rounded-lg mt-4">
               {message}
             </div>
           )}
 
-          <div className="mt-auto pt-4" style={{ paddingTop: '1rem' }}>
+          <div className="mt-auto pt-4">
             <Button
               type="submit"
               variant="dark"
