@@ -2,9 +2,8 @@
 
 import React, { useRef } from "react"
 import { X } from "lucide-react"
-import { ArrowUpTrayIcon, LinkIcon } from "@heroicons/react/24/outline"
-import { Input } from "@/components/ui/input"
-import { controlInputClass, controlRadiusClass, controlSurfaceClass } from "@/components/ui/control-classes"
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline"
+import { controlInputClass, controlRadiusClass } from "@/components/ui/control-classes"
 
 interface UploadStepProps {
   lectureLink: string
@@ -15,14 +14,12 @@ interface UploadStepProps {
 }
 
 export default function UploadStep({
-  lectureLink,
-  setLectureLink,
   uploadedFile,
   handleFileUpload,
   removeUploadedFile
 }: UploadStepProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const uploadSurfaceClass = `${controlSurfaceClass} w-full flex items-center justify-center gap-2 mt-2 text-sm font-medium px-4 py-12`
+  const uploadSurfaceClass = `${controlInputClass} w-full mt-2 px-4 py-12 flex items-center justify-center gap-2`
 
   const handleRemoveFile = () => {
     removeUploadedFile()
@@ -39,7 +36,7 @@ export default function UploadStep({
       <div className="mb-6">
         <label className="text-base font-semibold text-gray-700 block mb-3">Notes</label>
         <div className="relative">
-          {!lectureLink && !uploadedFile && (
+          {!uploadedFile && (
             <input
               type="file"
               accept=".pdf"
@@ -53,21 +50,21 @@ export default function UploadStep({
               className={`${uploadSurfaceClass} cursor-default select-none text-gray-600`}
             >
               <span className="font-medium truncate cursor-default select-none">{uploadedFile.name}</span>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleRemoveFile()
-                }}
-                className={`p-1 hover:bg-gray-50 ${controlRadiusClass} cursor-pointer flex-shrink-0 transition-colors`}
-                aria-label="Remove file"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleRemoveFile()
+                  }}
+                  className={`p-1 hover:bg-gray-50 ${controlRadiusClass} cursor-pointer flex-shrink-0 transition-colors`}
+                  aria-label="Remove file"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
             </div>
           ) : (
             <div 
-              className={`${uploadSurfaceClass} transition-colors ${lectureLink ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-50'}`}
+              className={`${uploadSurfaceClass} transition-colors cursor-pointer hover:bg-gray-50`}
             >
               <ArrowUpTrayIcon className="w-4 h-4 text-gray-400" />
               <span className="font-medium text-gray-400">Upload notes</span>
@@ -77,10 +74,14 @@ export default function UploadStep({
       </div>
 
       {/* YouTube URL Section */}
+      {/*
       <div>
         <label className="text-base font-semibold text-gray-700 block mb-3">Youtube</label>
         <div className="relative mt-2">
-          <LinkIcon className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 z-10 ${uploadedFile ? 'text-gray-200' : 'text-gray-400'}`} />
+          <LinkIcon
+            className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 z-10 ${uploadedFile ? 'text-gray-200' : 'text-gray-400'}`}
+            aria-hidden="true"
+          />
           {lectureLink && !uploadedFile && (
             <button
               type="button"
@@ -97,10 +98,11 @@ export default function UploadStep({
             value={lectureLink}
             onChange={(e) => setLectureLink(e.target.value)}
             disabled={!!uploadedFile}
-            className={`${controlInputClass} w-full !pl-14 ${lectureLink && !uploadedFile ? 'pr-10' : 'pr-4'} ${uploadedFile ? 'cursor-not-allowed placeholder:text-gray-300 text-gray-300' : ''}`}
+            className={`${controlInputClass} w-full pl-12 ${lectureLink && !uploadedFile ? 'pr-10' : 'pr-4'} ${uploadedFile ? 'cursor-not-allowed placeholder:text-gray-300 text-gray-300' : ''}`}
           />
         </div>
       </div>
+      */}
     </div>
   )
 }

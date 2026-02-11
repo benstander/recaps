@@ -285,17 +285,17 @@ export default function ProductPage({
           <button 
             type="button"
             onClick={handleLogoClick}
-            className="text-3xl font-bold text-gray-900 bg-transparent border-none cursor-pointer hover:opacity-70"
+            className="text-3xl leading-none font-bold text-gray-900 bg-transparent border-none cursor-pointer"
           >
             Recaps
           </button>
-          <Button
-            variant="dark"
+          <button
+            type="button"
             onClick={onSignUp}
-            className="px-8 py-4 rounded-full"
+            className="inline-flex items-center justify-center self-center bg-transparent border-none px-4 py-3 text-base leading-none font-medium text-gray-900 cursor-pointer rounded-md transition-colors hover:bg-gray-100 hover:text-gray-600"
           >
             Sign up
-          </Button>
+          </button>
         </div>
 
         {/* Main Content - Single Card with Form and Video Preview */}

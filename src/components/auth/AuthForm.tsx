@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { controlInputClass, controlInputButtonClass } from "@/components/ui/control-classes"
 import { Input } from "@/components/ui/input"
@@ -20,7 +19,6 @@ interface AuthFormProps {
 export default function AuthForm({
   initialMode = "login",
   onSuccess,
-  onModeChange,
   className = "",
 }: AuthFormProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode)
@@ -29,33 +27,27 @@ export default function AuthForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [message, setMessage] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
 
   const { signIn, signUp, signInWithGoogle } = useAuth()
 
   useEffect(() => {
     setMode(initialMode)
-    setShowPassword(false)
   }, [initialMode])
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (target.tagName !== 'INPUT' || (target.id !== 'email' && target.id !== 'password')) {
-        const emailInput = document.getElementById('email') as HTMLInputElement
-        const passwordInput = document.getElementById('password') as HTMLInputElement
-        if (emailInput && document.activeElement === emailInput) {
-          emailInput.blur()
-        }
-        if (passwordInput && document.activeElement === passwordInput) {
-          passwordInput.blur()
-        }
+    const handlePointerDownOutsideInput = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target?.closest("input")) return
+
+      const activeElement = document.activeElement
+      if (activeElement instanceof HTMLInputElement) {
+        activeElement.blur()
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener("pointerdown", handlePointerDownOutsideInput)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener("pointerdown", handlePointerDownOutsideInput)
     }
   }, [])
 
@@ -66,16 +58,14 @@ export default function AuthForm({
     setMessage("")
   }
 
+  const getErrorMessage = (err: unknown, fallback: string) => {
+    return err instanceof Error ? err.message : fallback
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     resetFeedback()
-
-    if (!showPassword) {
-      setShowPassword(true)
-      setLoading(false)
-      return
-    }
 
     try {
       if (isLogin) {
@@ -95,8 +85,8 @@ export default function AuthForm({
           setMessage("Check your email for the confirmation link, then come back to generate your video.")
         }
       }
-    } catch (err: any) {
-      setError(err.message ?? "Something went wrong. Please try again.")
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Something went wrong. Please try again."))
     } finally {
       setLoading(false)
     }
@@ -113,44 +103,31 @@ export default function AuthForm({
       } else {
         onSuccess?.()
       }
-    } catch (err: any) {
-      setError(err.message ?? "Google sign-in failed.")
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Google sign-in failed."))
     } finally {
       setLoading(false)
     }
-  }
-
-  const switchMode = () => {
-    const nextMode: AuthMode = isLogin ? "signup" : "login"
-    setMode(nextMode)
-    setEmail("")
-    setPassword("")
-    resetFeedback()
-    setShowPassword(false)
-    onModeChange?.(nextMode)
   }
 
   const inputClasses = controlInputClass
   const inputButtonClasses = controlInputButtonClass
 
   return (
-    <div className={`flex h-full min-h-[520px] flex-col justify-center ${className}`}>
-      <section className="text-left">
+    <div className={`flex h-full min-h-[520px] flex-col justify-between ${className}`}>
+      <section className="text-left pt-4">
         <h1 className="text-3xl font-semibold text-gray-900 leading-tight">
           Welcome to Recaps
           <span className="block text-gray-400 font-normal">Make Learning Fun</span>
         </h1>
       </section>
 
-      {/* Explicit spacer so separation can't be "optimized away" by layout */}
-      <div aria-hidden className="h-[72px] shrink-0" />
-
       <section className="space-y-4 mt-0">
         <button
           type="button"
           disabled={loading}
           onClick={handleGoogleSignIn}
-          className={inputButtonClasses}
+          className={`${inputButtonClasses} cursor-pointer`}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -179,9 +156,13 @@ export default function AuthForm({
           <div className="h-px w-full bg-gray-200" />
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <Label htmlFor="email" className="text-base font-semibold text-gray-700 block mb-3">
+            <Label
+              htmlFor="email"
+              className="text-base font-semibold text-gray-700 block mb-2"
+              onPointerDown={(event) => event.preventDefault()}
+            >
               Email
             </Label>
             <div className="relative mt-2">
@@ -198,55 +179,41 @@ export default function AuthForm({
             </div>
           </div>
 
-          <AnimatePresence>
-            {showPassword && (
-              <motion.div
-                initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                animate={{ opacity: 1, height: "auto", marginTop: "1rem" }}
-                exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="overflow-hidden"
-              >
-                <Label htmlFor="password" className="text-base font-semibold text-gray-700 block mb-3">
-                  Password
-                </Label>
-                <div className="relative mt-2">
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={inputClasses}
-                    onBlur={(e) => {
-                      e.target.blur();
-                    }}
-                    onMouseDown={(e) => {
-                      if (document.activeElement === e.target) {
-                        (e.target as HTMLInputElement).blur();
-                      }
-                    }}
-                    required
-                    autoComplete={isLogin ? "current-password" : "new-password"}
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div>
+            <Label
+              htmlFor="password"
+              className="text-base font-semibold text-gray-700 block mb-2"
+              onPointerDown={(event) => event.preventDefault()}
+            >
+              Password
+            </Label>
+            <div className="relative mt-2">
+              <Input
+                id="password"
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={inputClasses}
+                required
+                autoComplete={isLogin ? "current-password" : "new-password"}
+              />
+            </div>
+          </div>
 
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 border border-red-200 p-4 rounded-lg mt-4">
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 p-4 rounded-lg">
               {error}
             </div>
           )}
 
           {message && (
-            <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 p-4 rounded-lg mt-4">
+            <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 p-4 rounded-lg">
               {message}
             </div>
           )}
 
-          <div className="mt-auto pt-4">
+          <div>
             <Button
               type="submit"
               variant="dark"
