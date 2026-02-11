@@ -5,7 +5,6 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import ProductPage from "@/components/ProductPage"
 import type { AuthMode } from "@/components/auth/AuthForm"
-import type { AuthMode } from "@/components/auth/AuthForm"
 import { 
   WizardStep,
   VideoMode,

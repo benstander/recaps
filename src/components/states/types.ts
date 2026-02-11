@@ -4,7 +4,15 @@ export type WizardStep = 1 | 2 | 3 | 4 | 5
 export type VideoFormat = 'fullscreen' | 'splitscreen' | null
 export type BackgroundVideoCategory = 'gaming' | 'celebrities' | null
 export type GamingVideo = 'minecraft' | 'subway' | 'mega-ramp' | null
-export type CelebrityVideo = 'lebron' | 'ronaldo' | 'mcconaughey' | null
+export type CelebrityVideo =
+  | 'lebron'
+  | 'ronaldo'
+  | 'trump'
+  | 'theo-von'
+  | 'matthew-mc'
+  | 'elon-musk'
+  | 'mcconaughey'
+  | null
 export type BackgroundVideo = GamingVideo | CelebrityVideo | null
 
 // Mode type (replaces VideoStyle for clarity)
@@ -33,7 +41,7 @@ export interface VoiceOptions {
 }
 
 // Caption types - Updated font options
-export type CaptionFont = 'arial' | 'instrument-sans' | 'times-new-roman' | null
+export type CaptionFont = 'calibri' | 'arial' | 'impact' | 'instrument-sans' | 'times-new-roman' | null
 export type CaptionTextSize = 'small' | 'medium' | 'large' | null
 export type CaptionPosition = 'top' | 'middle' | 'bottom' | null
 

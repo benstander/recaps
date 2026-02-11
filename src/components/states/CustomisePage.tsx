@@ -166,10 +166,12 @@ export default function CustomisePage({
 
   // Get dynamic caption preview styles based on user selections
   const getCaptionPreviewStyles = () => {
-    const fontMapping = {
+    const fontMapping: Record<Exclude<CaptionFont, null>, string> = {
       calibri: 'Calibri, sans-serif',
       arial: 'Arial, sans-serif',
-      impact: 'Impact, sans-serif'
+      impact: 'Impact, sans-serif',
+      'instrument-sans': 'var(--font-instrument-sans), system-ui, sans-serif',
+      'times-new-roman': '"Times New Roman", Times, serif',
     }
 
     const sizeMapping = {

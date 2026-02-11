@@ -26,6 +26,10 @@ const VIDEO_URLS: Record<string, string> = {
   'mega-ramp': 'https://zgsukhxfrztnoojowzkr.supabase.co/storage/v1/object/public/background-videos/gta1.mp4',
   'lebron': 'https://zgsukhxfrztnoojowzkr.supabase.co/storage/v1/object/public/background-videos/lebron.mp4',
   'ronaldo': 'https://zgsukhxfrztnoojowzkr.supabase.co/storage/v1/object/public/background-videos/ronaldo.mp4',
+  'trump': 'https://odlodohhblopeekvquaa.supabase.co/storage/v1/object/public/background-videos/celebs/trump.mp4',
+  'theo-von': 'https://odlodohhblopeekvquaa.supabase.co/storage/v1/object/public/background-videos/celebs/theo-von.mp4',
+  'matthew-mc': 'https://odlodohhblopeekvquaa.supabase.co/storage/v1/object/public/background-videos/celebs/matthew-mc.mp4',
+  'elon-musk': 'https://odlodohhblopeekvquaa.supabase.co/storage/v1/object/public/background-videos/celebs/elon.mp4',
   'mcconaughey': 'https://zgsukhxfrztnoojowzkr.supabase.co/storage/v1/object/public/background-videos/matthew-mc.mp4',
 }
 
@@ -180,6 +184,8 @@ export default function VideoPreview({
   }, [preloadUrls])
 
   const captionFontFamily = (() => {
+    if (captionFont === "calibri") return "Calibri, Arial, sans-serif"
+    if (captionFont === "impact") return "Impact, Haettenschweiler, Arial Narrow Bold, sans-serif"
     if (captionFont === "instrument-sans") return "var(--font-instrument-sans), system-ui, sans-serif"
     if (captionFont === "times-new-roman") return '"Times New Roman", Times, serif'
     return "Arial, Helvetica, sans-serif"

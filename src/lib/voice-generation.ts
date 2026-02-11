@@ -60,6 +60,7 @@ const BACKGROUND_VIDEO_TO_VOICE_CHARACTER_MAP = {
   'trump': 'trump',
   'theo-von': 'theo von',
   'matthew-mc': 'matthew mcconaughey',
+  'mcconaughey': 'matthew mcconaughey',
   'elon-musk': 'elon musk',
 };
 

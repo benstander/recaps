@@ -242,7 +242,7 @@ async function generateSingleVideo({
   } else if (backgroundVideo === 'theo-von') {
     bgVideoUrl = getTheoVonVideoUrl();
     console.log('Using Theo Von video:', bgVideoUrl);
-  } else if (backgroundVideo === 'matthew-mc') {
+  } else if (backgroundVideo === 'matthew-mc' || backgroundVideo === 'mcconaughey') {
     bgVideoUrl = getMatthewMcVideoUrl();
     console.log('Using Matthew McConaughey video:', bgVideoUrl);
   } else if (backgroundVideo === 'elon-musk') {
