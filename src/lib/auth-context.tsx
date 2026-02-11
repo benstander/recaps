@@ -4,14 +4,19 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from './supabaseClient'
 
+type SignInResponse = ReturnType<typeof supabase.auth.signInWithPassword>
+type SignUpResponse = ReturnType<typeof supabase.auth.signUp>
+type SignOutResponse = ReturnType<typeof supabase.auth.signOut>
+type SignInWithGoogleResponse = ReturnType<typeof supabase.auth.signInWithOAuth>
+
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<any>
-  signUp: (email: string, password: string) => Promise<any>
-  signOut: () => Promise<void>
-  signInWithGoogle: () => Promise<any>
+  signIn: (email: string, password: string) => SignInResponse
+  signUp: (email: string, password: string) => SignUpResponse
+  signOut: () => SignOutResponse
+  signInWithGoogle: () => SignInWithGoogleResponse
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -41,20 +46,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  const signIn = async (email: string, password: string) => {
-    return await supabase.auth.signInWithPassword({ email, password })
+  const signIn = (email: string, password: string) => {
+    return supabase.auth.signInWithPassword({ email, password })
   }
 
-  const signUp = async (email: string, password: string) => {
-    return await supabase.auth.signUp({ email, password })
+  const signUp = (email: string, password: string) => {
+    return supabase.auth.signUp({ email, password })
   }
 
-  const signOut = async () => {
-    await supabase.auth.signOut()
+  const signOut = () => {
+    return supabase.auth.signOut()
   }
 
-  const signInWithGoogle = async () => {
-    return await supabase.auth.signInWithOAuth({
+  const signInWithGoogle = () => {
+    return supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/`

@@ -2,19 +2,8 @@ import React, { useRef, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { SparklesIcon } from "@heroicons/react/24/outline"
 import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { 
   VideoFormat, 
-  BackgroundVideo, 
   BackgroundVideoSelection,
-  BackgroundVideoCategory,
-  GamingVideo,
-  CelebrityVideo,
   VoiceOptions,
   VoiceStyle,
   VoiceCharacter,

@@ -3,10 +3,9 @@ import React from "react";
 interface ProgressBarProps {
   currentStep: number;
   totalSteps: number;
-  showText?: boolean;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps, showText = true }) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps }) => {
   const percent = Math.max(0, Math.min(100, (currentStep / totalSteps) * 100));
   return (
     <div className="w-full flex flex-col items-center gap-2">

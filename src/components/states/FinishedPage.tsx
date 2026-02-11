@@ -1,6 +1,5 @@
 import React from "react"
 import { Button } from "@/components/ui/button"
-import ProgressBar from "@/components/ui/ProgressBar"
 
 interface FinishedPageProps {
   generatedVideoUrl: string

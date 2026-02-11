@@ -1,6 +1,7 @@
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs/promises';
+import { createWriteStream } from 'fs';
 import https from 'https';
 import http from 'http';
 import { URL } from 'url';
@@ -159,7 +160,7 @@ export class FFmpegVideoRenderer {
       const parsedUrl = new URL(url);
       const client = parsedUrl.protocol === 'https:' ? https : http;
       
-      const file = require('fs').createWriteStream(outputPath);
+      const file = createWriteStream(outputPath);
       const request = client.get(url, async (response) => {
         if (response.statusCode !== 200) {
           reject(new Error(`Failed to download file: ${response.statusCode}`));

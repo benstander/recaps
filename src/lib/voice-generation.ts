@@ -382,7 +382,7 @@ export async function generateVoice(options: VoiceGenerationOptions): Promise<Vo
     console.log('Audio buffer size:', audioBuffer.length, 'bytes');
     
     // Process character timestamps if available
-    let characterTimestamps: CharacterTimestamp[] = [];
+    const characterTimestamps: CharacterTimestamp[] = [];
     let wordTimestamps: WordTimestamp[] = [];
     
     if (alignment && alignment.characters && alignment.character_start_times_seconds && alignment.character_end_times_seconds) {

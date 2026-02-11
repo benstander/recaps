@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { controlInputClass, controlRadiusClass, controlSurfaceClass } from "@/components/ui/control-classes"
 import { Input } from "@/components/ui/input"
 import { Link, FileText, X } from "lucide-react"
-import ProgressBar from "@/components/ui/ProgressBar"
 
 interface LandingPageProps {
   lectureLink: string

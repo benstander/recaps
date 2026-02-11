@@ -14,12 +14,6 @@ const MEGA_RAMP_VIDEOS = [
   'gta1.mp4',
 ];
 
-const CELEBRITY_VIDEOS = [
-  'ronaldo.mp4',
-  'matthew-mc.mp4',
-  'lebron.mp4',
-];
-
 // Optimized audio download settings
 const AUDIO_QUALITY_OPTIONS: ytdl.downloadOptions = {
   filter: 'audioonly' as ytdl.Filter,

@@ -284,7 +284,7 @@ async function generateSingleVideo({
     throw new Error(`Video rendering failed: ${renderError instanceof Error ? renderError.message : 'Unknown error'}`);
   }
 
-  let finalVideoUrl = `/generated-videos/${videoFilename}`;
+  const finalVideoUrl = `/generated-videos/${videoFilename}`;
 
   // No Supabase upload, just return local URL
   console.log('Video generated successfully:', finalVideoUrl);

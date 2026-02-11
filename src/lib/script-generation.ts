@@ -1,4 +1,3 @@
-import { openai } from '@ai-sdk/openai';
 import { xai } from '@ai-sdk/xai';
 import { generateText } from 'ai';
 
