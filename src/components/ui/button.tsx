@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { controlRadiusClass } from "./control-classes"
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "orange" | "grey" | "dark" | "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
@@ -16,7 +17,7 @@ export function Button({
   style,
   ...props 
 }: ButtonProps) {
-  const baseClasses = "cursor-pointer font-semibold rounded-md border-2"
+  const baseClasses = `cursor-pointer font-semibold ${controlRadiusClass} border-2`
   
   const transitionStyle: React.CSSProperties = {
     transitionProperty: 'background, box-shadow, transform',

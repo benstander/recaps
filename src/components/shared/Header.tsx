@@ -4,7 +4,7 @@ import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
-import { User, LogOut, Crown, ExternalLink } from "lucide-react"
+import { User, Crown, ExternalLink } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function Header() {
@@ -18,11 +18,11 @@ export default function Header() {
   }
 
   const handleSignIn = () => {
-    router.push('/auth')
+    router.push("/auth")
   }
 
   const handleSignUp = () => {
-    router.push('/auth?mode=signup')
+    router.push("/auth?mode=signup")
   }
 
   const handleUpgradePlan = () => {
@@ -120,6 +120,7 @@ export default function Header() {
           onClick={() => setShowUserMenu(false)}
         />
       )}
+
     </>
   )
-} 
+}
